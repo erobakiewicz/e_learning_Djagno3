@@ -10,11 +10,13 @@ from django.views.generic.base import TemplateResponseMixin, View
 
 from courses.forms import ModuleFormSet
 from courses.models import Course, Module, Content, Subject
+# overriding get_queryset method to get only content created by logged in user
+from students.forms import CourseEnrollForm
 
 
 # def mixins
 
-# overriding get_queryset method to get only content created by logged in user
+
 class OwnerMixin(object):
     def get_queryset(self):
         qs = super().get_queryset()
@@ -230,10 +232,18 @@ class CourseListView(TemplateResponseMixin, View):
             subject = get_object_or_404(Subject, slug=subject)
             courses = courses.filter(subject=subject)
         return self.render_to_response({'subjects': subjects,
-                                          'subject': subject,
-                                          'courses': courses})
+                                        'subject': subject,
+                                        'courses': courses})
 
 
 class CourseDetailView(DetailView):
     model = Course
     template_name = 'courses/course/detail.html'
+
+    # adds to ctx enrollment form (it's get rendered as a button)
+    def get_context_data(self, **kwargs):
+        context = super(CourseDetailView, self).get_context_data(**kwargs)
+        context['enroll_form'] = CourseEnrollForm(
+            initial={'course': self.object}
+        )
+        return context

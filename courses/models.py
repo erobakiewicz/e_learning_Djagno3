@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.template.loader import render_to_string
 
 from .fields import OrderField
 
@@ -26,7 +27,7 @@ class Course(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     overview = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
-    student = models.ManyToManyField(User, related_name='courses_joined',
+    students = models.ManyToManyField(User, related_name='courses_joined',
                                      blank=True)
 
     class Meta:
@@ -91,6 +92,13 @@ class ItemBase(models.Model):
 
     def __str__(self):
         return self.title
+
+    # method used to render html templates dynamically using model_name
+    def render(self):
+        return render_to_string(
+            f"courses/content/{self._meta.model_name}.html",
+            {'item': self}
+        )
 
 
 # child models of an abstract model ItemBase

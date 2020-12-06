@@ -35,7 +35,7 @@ class Course(models.Model):
 
 
 class Module(models.Model):
-    course = models.ForeignKey(Course, related_name='modlues',
+    course = models.ForeignKey(Course, related_name='modules',
                                on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -70,7 +70,7 @@ class Content(models.Model):
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
     # adding custom field OrderField for ordering content with respect to module
-    order = OrderField(blank=True, for_fields=['course'])
+    order = OrderField(blank=True, for_fields=['module'])
 
     class Meta:
         ordering = ['order']

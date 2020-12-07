@@ -1,6 +1,7 @@
 from django.forms import inlineformset_factory
 
 from courses.models import Course, Module
+
 """
 Formset to validate all forms
 fields: fields included in all forms
@@ -12,4 +13,3 @@ ModuleFormSet = inlineformset_factory(Course,
                                       fields=['title', 'description'],
                                       extra=2,
                                       can_delete=True)
-

@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+
 # model_name template custom filter to apply in templates "|model_name"
 @register.filter
 def model_name(obj):

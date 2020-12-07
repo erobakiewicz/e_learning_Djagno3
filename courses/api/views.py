@@ -6,7 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from courses.api.serializers import SubjectSerializer, CourseSerializer
+from courses.api.permissions import IsEnrolled
+from courses.api.serializers import SubjectSerializer, CourseSerializer, CourseWithContentsSerializer
 from courses.models import Subject, Course
 
 
@@ -19,19 +20,8 @@ class SubjectDetailView(generics.RetrieveAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
 
-# replaced by @action enroll
-# class CourseEnrollView(APIView):
-#     """
-#     APIview - only post method allowed, pk of course to indentify course
-#     and add current user to it.
-#     """
-#     authentication_classes = (BasicAuthentication,)
-#     permission_classes = (IsAuthenticated,)
-#
-#     def post(self, request, pk, format=None):
-#         course = get_object_or_404(Course, pk=pk)
-#         course.students.add(request.user)
-#         return Response({'enrolled': True})
+
+
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Course.objects.all()
@@ -41,7 +31,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             methods=['post'],
             authentication_classes=[BasicAuthentication],
             permission_classes=[IsAuthenticated])
-    def enroll(self, request, *args,**kwargs):
+    def enroll(self, request, *args, **kwargs):
         """
         Custom method enables to enroll students for courses, detail=True
         specifies that action is taken on single obj (e.g.course), for method
@@ -51,3 +41,15 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course = self.get_object()
         course.students.add(request.user)
         return Response({'enrolled': True})
+
+    @action(detail=True,
+            methods=['get'],
+            serializer_class=CourseWithContentsSerializer,
+            authentication_classes=[BasicAuthentication],
+            permission_classes=[IsEnrolled, IsAuthenticated])
+    def contents(self, request, *args, **kwargs):
+        """
+        GET single object (course) to render using CourseWithContentsSerializer
+        and check auth/perms and returns course object via retrieve.
+        """
+        return self.retrieve(request, *args, **kwargs)

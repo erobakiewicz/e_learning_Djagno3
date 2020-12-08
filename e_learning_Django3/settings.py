@@ -92,7 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'e_learning_Django3.wsgi.application'
-
+ASGI_APPLICATION = 'e_learning_Django3.routing.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 

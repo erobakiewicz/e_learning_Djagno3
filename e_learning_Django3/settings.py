@@ -36,7 +36,7 @@ DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: keep the secret key used in production secret!
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['e-learning-django3.herokuapp.com','127.0.0.1']
 
 # Application definition
 
